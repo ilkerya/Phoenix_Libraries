@@ -1,0 +1,77 @@
+
+
+        public bool Update500byteSendBuffersV1(String FileName)
+        {
+            GridHelper gridHelper500 = new GridHelper(dt_500Command);
+
+            if (!(Directory.Exists(Okyanus.Definitions.WorkDrive + Okyanus.Definitions.Config_Directory)))
+            { // directory yoksa mydocumentstan basliyor
+                try { Directory.CreateDirectory(Okyanus.Definitions.WorkDrive + Okyanus.Definitions.Config_Directory); }
+                //     catch (IOException) { MessageBox.Show("Directory Error !!"); return; }// e->GetType()->Name ;
+                catch (IOException) { MessageBox.Show("Directory Error !!"); return false; }// e->GetType()->Name ;
+            }
+            FileName = Okyanus.Definitions.WorkDrive + Okyanus.Definitions.Config_Directory + "\\" + FileName;
+            String DataFile = "false";
+            try
+            {
+                gridHelper500.ExportCSV(FileName);// dosyayi kaydet
+
+                StreamReader sr = new StreamReader(FileName);  // // dosyayi okuma hazirligi
+                if (sr != null)
+                {     // oku
+                    DataFile = sr.ReadToEnd();
+                }
+                sr.Close();
+                DataTable dataElements = gridHelper500.GetDataTable4_500ByteCommand();
+                string[] csvseparator = { ",", nl,
+                            GridWork.GridHelper.Variable_FC_Oky109,GridWork.GridHelper.Variable_FC_Oky108,
+                            GridWork.GridHelper.Variable_FC_Oky107,GridWork.GridHelper.Variable_FC_Oky106,
+                            GridWork.GridHelper.Variable_FC_Oky105,GridWork.GridHelper.Variable_FC_Oky104,
+                            GridWork.GridHelper.Variable_FC_Oky103,GridWork.GridHelper.Variable_FC_Oky102,
+                            GridWork.GridHelper.Variable_FC_Oky101,GridWork.GridHelper.Variable_FC_Oky100};
+
+                string[] words = DataFile.Split(csvseparator, StringSplitOptions.RemoveEmptyEntries);
+                //     string[] words = DataFile.Split(); 
+                if (words.Count() != 250)
+                { // toplam 250 eleman olmasi gerekiyor!!!
+                    MessageBox.Show("Temp. File  Error !!" + nl + " Grid Updated?");
+                    return false;
+                }
+
+                int j = 0;
+                for (int i = 0; i < 25; i++)
+                {
+                    DataRow dr = dataElements.NewRow();
+                    //   if(dr.
+                    j = i * 10;//5->10
+                    dr[0] = words[j];
+                    dr[1] = words[j + 1];
+                    dr[2] = words[j + 2];
+                    dr[3] = words[j + 3];
+                    dr[4] = words[j + 4];
+                    dr[5] = words[j + 5];// artti bes tane row
+                    dr[6] = words[j + 6];
+                    dr[7] = words[j + 7];
+                    dr[8] = words[j + 8];
+                    dr[9] = words[j + 9];
+                    dataElements.Rows.Add(dr);  // row eklemek icin kullan
+                }
+                UInt16 parseData;
+                j = 0;
+                for (int i = 0; i < (25 * 10); i++)
+                {
+                    UInt16.TryParse(words[i], out parseData);
+                    Okyanus.Variables.SendBuffer[i] = parseData;
+                }
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("File Error !!" + nl + "Close File If Open");
+                return false;
+            }
+            if ((File.Exists(FileName)))
+            {
+                File.Delete(FileName);
+            }
+            return true;
+        }
