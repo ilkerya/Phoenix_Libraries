@@ -20,7 +20,7 @@
 #include <WiFi.h>
 #include <PubNub.h>
 
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+//byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 const int subLedPin = RED_LED;
 
@@ -30,9 +30,9 @@ char channel[] = "hello_world";
 char uuid[] = "xxxxxxxx-xxxx-4444-9999-xxxxxxxxxxxx";
 
 // your network name also called SSID
-char ssid[] = "energia";
+char ssid[] = "Yagci24GHz";
 // your network password
-char password[] = "launchpad";
+char password[] = "berkmert";
 
 void random_uuid() {
 	randomSeed(analogRead(0) + millis() * 1024);
@@ -73,7 +73,7 @@ void setup()
 	Serial.println("\nIP Address obtained");
 	// We are connected and have an IP address.
 	// Print the WiFi status.
-	printWifiStatus();
+	printWifiStatuswer();
 
 	PubNub.begin(pubkey, subkey);
 	random_uuid();
@@ -115,7 +115,7 @@ void loop()
 	delay(200);
 }
 
-void printWifiStatus() {
+void printWifiStatuswer() {
 	// print the SSID of the network you're attached to:
 	Serial.print("SSID: ");
 	Serial.println(WiFi.SSID());

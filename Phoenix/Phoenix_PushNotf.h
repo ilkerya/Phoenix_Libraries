@@ -1,49 +1,23 @@
 
 
-/*
-String PushNotification_Data(void){
-		String data= IAQstr;
-		data += "  Temp:";
-		data += Float2String(Filtered.Temperature);//f
-		//data +="°C Humidity:%";      //12
-		data +=" 'C Hum:%";      //12
-		data += Float2String(Filtered.Humidity);//f
-		data +=" PM2.5:";            //7
-		data += Float2String(Filtered.PM25);
-		data +=" TVOC:"; 		     //5
-		data += String(Filtered.TVOC);
-		data +="ppb CO2e:"; 	         //8
-		data += String(Filtered.CO2e);
-		data +="ppm Press:";      //13
-		data += Float2String(Filtered.Pressure/100);
-		data +="mBar Light:";         //11
-		data += String(Filtered.Light);
-		data +="Lux Noise:";          //10
-		data += Float2String(Filtered.Noise);
-		data +="dB ";
-		data += String("Id:");
-		data += String(Device[USERID]);
-	//	data += AddData;		         //2
-		return data;
-}
-*/
+
 String PushNotification_Data140(void){
 		String data= IAQstr;
-		data += Float2String(Filtered.Temperature);//f
+		data += String_Temperature;//f
 		data +="'C %";      //12
-		data += Float2String(Filtered.Humidity);//f
+		data += String_Humidity;//f
 		data +="Rh PM25:";            //8
-		data += Float2String(Filtered.PM25);
+		data += String_PM25;
 		data +=" VOC"; 		     //5
-		data += String(Filtered.TVOC);
+		data += String_TVOC;
 		data +="ppb CO2:"; 	         //8
-		data += String(Filtered.CO2e);
+		data += String_CO2e;
 		data +="ppm ";      //13
-		data += Float2String(Filtered.Pressure/100);
+		data += String_Pressure;
 		data +="mbar Light";         //11
-		data += String(Filtered.Light);
+		data += String_Light;
 		data +="Lux Noise";          //10
-		data += Float2String(Filtered.Noise); //
+		data += String_Noise; //
 		data +="dB ";
 	//	data += String("_");
 		data += String(Device[USERID]);
@@ -53,40 +27,42 @@ String PushNotification_Data140(void){
 
 
 String PushNotification_Data280(void){
+	// http://www.utf8-chartable.de/
+	// https://mothereff.in/utf-8
 		String data= "The Air Quality In The Room is " + IAQstr; //18+ 13
 
 		data += SM_ProbType + SM_Problem;
 		data += SM_Advice;
-		//data += " ";	//5
-		data += Float2String(Filtered.Temperature);//4
-		data +="'C %";      //13
-		data += String((int)Filtered.Humidity);//4
+		data += String_Temperature;//4
+		data +="\xc2\xb0\x43\x20\x25\x20";      //'C
+		data += String_Humidity;//4
 		data +="Rh PM2.5:";            //11
-		data += Float2String(Filtered.PM25);//4
-		data +="ug/m3 CO2:"; 		     //4
-		data += String(Filtered.CO2e); //4
+		data += String_PM25;//4
+		data +="ug/m";
+		data +="\xc2\xb3";
+		data +=" CO2:"; 		     //4
+		data += String_CO2e; //4
 		data +="ppm VOC:";
-		data += String(Filtered.TVOC);  //4
+		data += String_TVOC;  //4
 		data +="ppb Pressure:"; 	         //12
-		data += String((int)(Filtered.Pressure/100)); //4
+		data += String_Pressure; //4
 		data +="mbar Light:";         //10
-		data += String(Filtered.Light); //3
+		data += String_Light; //3
 		data +="Lux Noise:";          //9
-		data += Float2String(Filtered.Noise); //4
+		data += String_Noise; //4
 		data +="dB DeviceId:";    //3
-	//	data += String("_");
 		data += String(Device[USERID]); //4
-	//	data += AddData;
+		data += " #OpenAir_IAQ #OpenAir_Eco  #IndoorAirQuality";
 		return data;
 }
-
+/*
 String PushNotification_Data4Arduino(void){
 		String data= PushNotification_Data280();
 		data += " #OpenAir_IAQ #OpenAir_Eco  #IndoorAirQuality";
 		return data;
 }
 
-
+*/
 void ChoerosTwitter (String AddData){
 
 			// http://playground.arduino.cc/Code/UTF-8

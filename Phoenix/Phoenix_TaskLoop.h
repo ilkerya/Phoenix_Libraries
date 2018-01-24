@@ -1,4 +1,6 @@
 
+
+
 void Phoenix_StartUp(void){
     Serial.begin(115200);
     CompilerInfo();PrintDeviceInfo();
@@ -7,12 +9,14 @@ void Phoenix_StartUp(void){
     delay(10);
 ///////////////////////////// TSL2591
 
-
+#ifndef NO_SENSOR_INIT
     GSensor.begin();delay(10);
     uint8_t GSensorID = GSensor.chipID();
     delay(10);
     Serial.print("GSensorchipID: ");
     Serial.println(GSensorID);
+#endif
+
 
     delay(100);
     Simulation.ServerDisconnect = false;
@@ -27,10 +31,11 @@ void Phoenix_StartUp(void){
 #endif
     LedStatus.IAQStatus = false;
 
+
+#ifndef NO_SENSOR_INIT
     tmp006.begin();
     tmp006.wake();
     delay(10);
-
     #ifdef TSL2591_LIGHT_NEW
       if (tsl.begin())
         Serial.println(F("Found a TSL2591 sensor"));
@@ -45,14 +50,30 @@ void Phoenix_StartUp(void){
     #ifdef TSL2561_LIGHT_OLD
         al_sensor.begin();
     #endif
+#endif
 
+#ifndef NO_SENSOR_INIT
     rh_sensor.begin();
+#endif
+
     IRSend1.Begin();
 
+
+#ifndef NO_SENSOR_INIT
      barometer.begin();
         // Grab a baseline pressure for delta altitude calculation.
     pressure_baseline = barometer.getPressure(MODE_ULTRA);
 
+
+    delay(10);
+    gas.begin(0x04);//the default I2C address of the slave is 0x04
+  //   gas.begin();//the default I2C address of the slave is 0x04
+      delay(10);
+    gas.powerOn();
+    delay(10);
+//    Serial.print("MultiChannel Gas Sensor Firmware Version = ");
+    Serial.println(gas.getVersion());
+#endif
    //----
     pinMode(FAN_PORT,OUTPUT);
     pinMode(BEEP_PORT,OUTPUT);
@@ -242,7 +263,7 @@ void Phoenix_Loop(void){
                     #endif
             break;
             case 22:
-
+					//	Cloud_Kepware();  //
             break;
             case 23:
                       #ifndef LAB_TEST_DEVICE
@@ -270,12 +291,12 @@ void Phoenix_Loop(void){
             case 59:
                             #ifndef LAB_TEST_DEVICE
                           #ifdef TRIODOR_CLOUD
-								JsonPrep2Send();
+
                               Cloud_Triodor();  // update there is change
 
                               LedStatus.CloudDataSent = true;
 
-                              Cloud_Kepware();  //
+
                           #endif
                           Serial.println();
                         printWifiStatus();

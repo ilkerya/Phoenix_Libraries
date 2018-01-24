@@ -1,11 +1,16 @@
 
+/*
+	2017.12.27 IY
+	All Keys and Tokens are fake! Sice they are private did not expose any! This file lets you compile the project
+	any key or token must be created in order to run relevent service!
+*/
 
 
+	char  TriodorAddress[]= "xxxx.xxxxxxx.net";
 
-
-
-
-
+  	String Trio_username = "xxxxxx";
+  	String Trio_password = "xxxxxxxxxxx";
+	#define TRIODOR_POST_MSG "/sensorvalues/add"
 
 
 
@@ -28,6 +33,10 @@ char* Config[]={"foo@gmail.com","0","0","0","0"};//
 //Serial.print("GoogleOn/Off : ");Serial.print(String(Config[4])); //Google search enable/disable  1=enable 0=disable
 
 
+
+// "arduino-tweet.appspot.com"
+char TweetToken[] = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
 #define TEMBOO_ACCOUNT "xxxxxxx"  // Your Temboo account name
 #define TEMBOO_APP_KEY_NAME "1234567"  // Your Temboo app name
 #define TEMBOO_APP_KEY "12345678901234567890123456789012"  // Your Temboo app key
@@ -43,5 +52,10 @@ const String GMAIL_USER_NAME = "foo@gmail.com";
 // your application specific password (see instructions above)
 const String GMAIL_APP_PASSWORD = "1234567890123456";
 
+const String USER_EMAIL2RECEIVE = "fake@gmail.com";
 
+const String CONSUMERKEYVALUE = "fffffffffffffffffffffffff";
+const String ACCESSTOKENVALUE= "fffffffffffffffffffffffff";
+const String CONSUMERSECRETVALUE = "fffffffffffffffffffffffff";
+const String ACCESSTOKENSECRETVALUE = "fffffffffffffffffffffffff";
 

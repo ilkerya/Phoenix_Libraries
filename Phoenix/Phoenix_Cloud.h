@@ -10,14 +10,83 @@
 	//	#define ARDUINO_PLATFORM
 
 
+/*
+const char *hstreamName = "humidity";
+const char *tstreamName = "temperature";
+
+double latitude = -37.97884;
+double longitude = -57.54787; // You can also read those values from a GPS
+double elevation = 15;
+
+const char *streamNames[] = { tstreamName, hstreamName };
+
+const char *streamNames[] = { "temperature", "humidity" };
+int streamNum  = sizeof(streamNames)/sizeof(const char *);
+const int counts[] = { 2, 1 };
+const char *ats[] = { "2016-09-12T12:12:12.234Z",
+                      "2016-09-12T12:12:12.567Z",
+                      "2016-09-12T12:12:12.000Z" };
+
+*/
+
+
+
+
+
 void ATT_CLOUD(void){
-  int response1 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName1, IAQ.TVOC);
-  int response2 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName2, RawValue.Pressure);
-  int response3 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName3, RawValue.PM25);
-  int response4 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName4, RawValue.Temperature);
-  int response5 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName5, RawValue.Humidity);
-  int response6 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName6, RawValue.Light);
-  int response7 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName7, Filtered.Noise);
+  if(SensorDataReady2Send == false)return;
+/*
+  const char streamName1[] = "VOC"; // Stream you want to push to
+  const char streamName2[] = "Pressure"; // Stream you want to push to
+  char streamName3[] = "PM25"; // Stream you want to push to
+  char streamName4[] = "Temperature"; // Stream you want to push to
+  char streamName5[] = "Humidity"; // Stream you want to push to
+  char streamName6[] = "Light"; // Stream you want to push to
+  char streamName7[] = "Noise"; // Stream you want to push to
+  char streamName8[] = "ID"; // Stream you want to push to
+*/
+
+//   double values[] = { 10, 20};
+	 const char *streamNames[] = { "VOC",
+	 							   "Pressure",
+	 							   "PM25",
+	 							   "Temperature",
+	 							   "Humidity",
+	 							   "Light",
+	 							   "Noise",
+	 							   "ID"
+	 							};
+	String values[] = { String_TVOC,
+						String_Pressure,
+						String_PM25,
+						String_Temperature,
+						String_Humidity,
+						String_Light,
+						String_Noise,
+						Device[USERID]
+						};
+
+//	double values[] = { 1,2,3,4,5,6,7,8};
+
+    int response = m2xClient.postDeviceUpdate(Device[AT2T_CLOUD_ID], 8, streamNames, values, NULL);
+
+      Serial.print("Al:");Serial.print(response);
+      Serial.println();
+
+
+
+ // int response = m2xClient.postDeviceUpdates(Device[AT2T_CLOUD_ID], 2, streamNames, counts, ats, values);
+ // response = m2xClient.postDeviceUpdates(Device[AT2T_CLOUD_ID], 2, streamNames,  { Filtered.Humidity, Filtered.Temperature});
+
+ /*
+
+  int response1 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName1, String_TVOC);
+  int response2 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName2, String_Pressure);
+  int response3 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName3, String_PM25);
+  int response4 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName4, String_Temperature);
+  int response5 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName5, String_Humidity);
+  int response6 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName6, String_Light);
+  int response7 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName7, String_Noise);
   int response8 = m2xClient.updateStreamValue(Device[AT2T_CLOUD_ID], streamName8, Device[USERID]);
 
   Serial.print("1:");Serial.print(response1);
@@ -30,31 +99,29 @@ void ATT_CLOUD(void){
   Serial.print(" 8:");Serial.print(response8);
   Serial.println();
 
+
+*/
 }
 
 
-
-
-
-
-String Jsondata;
 void JsonPrep2Send(void){
   	char Separator = ','; // put at the end of any updated value
 				// Trend Up:1 Stable:0 Down:-1
 
   		Jsondata ="{\"username\":\""+Trio_username+"\",\"password\":\""+Trio_password+"\",\"data\":{";
   	//	Jsondata ="{\"username\":\""Trio_username"\",\"password\":\""Trio_password"\",\"data\":{";
-		Jsondata += "\"a\":";Jsondata += String(Filtered.TVOC);	 Jsondata += Separator;
+		Jsondata += "\"a\":";Jsondata += String_TVOC;	 Jsondata += Separator;
 		Jsondata += "\"a_t\":";Jsondata += String(Filtered.TVOC_Trend);Jsondata +=Separator;
 
-  		Jsondata += "\"b\":";Jsondata += Float2String(Filtered.Temperature);Jsondata +=Separator;
+  		Jsondata += "\"b\":";Jsondata += String_Temperature;Jsondata +=Separator;
+
   		Jsondata += "\"b_t\":";Jsondata += String(Filtered.Temperature_Trend);Jsondata +=Separator;
 
-  		Jsondata += "\"c\":";Jsondata += Float2String(Filtered.Humidity);Jsondata +=Separator;
+  		Jsondata += "\"c\":";Jsondata += String_Humidity;Jsondata +=Separator;
   		Jsondata += "\"c_t\":";Jsondata += String(Filtered.Humidity_Trend);Jsondata +=Separator;
 
 #ifndef SENSEAIR_CO2_INSTALLED
-		Jsondata += "\"d\":";Jsondata += String(Filtered.CO2e);Jsondata +=Separator;
+		Jsondata += "\"d\":";Jsondata += String_CO2e;Jsondata +=Separator;
 		Jsondata += "\"d_t\":";Jsondata += String(Filtered.CO2e_Trend);Jsondata +=Separator;
 #endif
 #ifdef SENSEAIR_CO2_INSTALLED
@@ -62,20 +129,20 @@ void JsonPrep2Send(void){
 		Jsondata += "\"d_t\":";Jsondata += String(Filtered.CO2_Absolute_Trend);Jsondata +=Separator;
 #endif
 
-  		Jsondata += "\"e\":";Jsondata += Float2String(Filtered.PM25);Jsondata +=Separator;
+  		Jsondata += "\"e\":";Jsondata += String_PM25;Jsondata +=Separator;
   		Jsondata += "\"e_t\":";Jsondata += String(Filtered.PM25_Trend);Jsondata +=Separator;
 
-  		Jsondata += "\"f\":";Jsondata += Float2String(AccmaxTilt);Jsondata +=Separator;
+  		Jsondata += "\"f\":";Jsondata += Float2Str_OneDigExp(AccmaxTilt);Jsondata +=Separator;
   //		Jsondata += "\"f_t\":";data += String(Filtered.);Jsondata +=Separator;
   		Jsondata += "\"f_t\":";Jsondata += "0";Jsondata +=Separator;
 
-  		Jsondata += "\"g\":";Jsondata += String(Filtered.Light);Jsondata +=Separator;
+  		Jsondata += "\"g\":";Jsondata += String_Light;Jsondata +=Separator;
  		Jsondata += "\"g_t\":";Jsondata += String(Filtered.Light_Trend);Jsondata +=Separator;
 
-  		Jsondata += "\"h\":";Jsondata += Float2String(Filtered.Noise);Jsondata +=Separator;
+  		Jsondata += "\"h\":";Jsondata += String_Noise;Jsondata +=Separator;
   		Jsondata += "\"h_t\":";Jsondata += String(Filtered.Noise_Trend);Jsondata +=Separator;
 
-  		Jsondata += "\"i\":";Jsondata += Float2String(Filtered.Pressure/100);Jsondata +=Separator;
+  		Jsondata += "\"i\":";Jsondata += String_Pressure;Jsondata +=Separator;
   		Jsondata += "\"i_t\":";Jsondata +=String(Filtered.Pressure_Trend);Jsondata +=Separator;
 
 		Jsondata += "\"j\":";Jsondata += String(Filtered.CO2e);Jsondata +=Separator;
@@ -162,14 +229,15 @@ void TweetApp(void){
 	//	client.println("POST http://" LIB_DOMAIN "/update HTTP/1.0");
 //char Tweetmsg[] = "Tweeting!";
 //char Tweetmsg[280];
+	// linked with
+	// https://twitter.com/CleanAir_IoT
 
-
-	int  StrLength = (PushNotification_Data4Arduino()).length();
+	int  StrLength = (PushNotification_Data280()).length();
 	char Tweetmsg[StrLength+1];
 	for(i = 0; i < StrLength; i++){
-		Tweetmsg[i] = (PushNotification_Data4Arduino()).charAt(i);
-		Serial.print(" ");Serial.print(i);Serial.print(":");
-		Serial.print(Tweetmsg[i]);
+		Tweetmsg[i] = (PushNotification_Data280()).charAt(i);
+	//	Serial.print(" ");Serial.print(i);Serial.print(":");
+	//	Serial.print(Tweetmsg[i]);
 	}
 	Tweetmsg[StrLength] = NULL;
 
@@ -239,6 +307,8 @@ void Cloud_Kepware(){
 	   	char  Kepware[]= "127.0.0.1:3000"; // 80
 	   	char Cloud[sizeof(Kepware)];   // https://mobiledev.lely.com/apptests/ddn/electrolux.html
 
+
+	if(SensorDataReady2Send == false)return; // send data when it is ready
   	for(i = 0; i < sizeof(Kepware) ; i++){
 	  	Cloud[i] = Kepware[i];
   	}
@@ -294,6 +364,9 @@ void Cloud_Triodor(){
 	int i;
   	char  fakeserver[]= "fake server adress";
 
+
+	if(SensorDataReady2Send == false)return; // send data when it is ready
+	JsonPrep2Send();
 /*
 	for(i=0; i< 5; i++){
 	//	try += String(Phoenix[i]);

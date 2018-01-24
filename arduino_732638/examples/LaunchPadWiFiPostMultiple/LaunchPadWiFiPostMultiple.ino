@@ -5,8 +5,8 @@
 #define ENERGIA_PLATFORM
 #include "M2XStreamClient.h"
 
-char ssid[] = "<ssid>"; //  your network SSID (name)
-char pass[] = "<WPA password>";    // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "uuu"; //  your network SSID (name)
+char pass[] = "fgfgg";    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
@@ -15,11 +15,16 @@ char deviceId[] = "<device id>"; // Device you want to post to
 char m2xKey[] = "<M2X access key>"; // Your M2X access key
 
 const int temperaturePin = A0;
-
+/*
 const char *streamNames[] = { "temperature", "humidity" };
 int counts[] = { 2, 1 };
 const char *ats[] = { "2015-03-22T19:15:00Z", "2015-03-22T19:16:00Z", "2015-03-22T19:15:00Z" };
 double values[] = { 10.0, 20.0, 7.5 };
+*/
+int counts[] = { 2, 1 };
+const char *ats[] = { "2015-03-22T19:15:00Z", "2015-03-22T19:16:00Z", "2015-03-22T19:15:00Z" };
+double values[] = { 10.0, 20.0, 7.5 };
+
 
 WiFiClient client;
 M2XStreamClient m2xClient(&client, m2xKey);
@@ -32,7 +37,7 @@ void setup() {
   // print the network name (SSID);
   Serial.println(ssid); 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, pass);
   while ( WiFi.status() != WL_CONNECTED) {
     // print dots while we wait to connect
     Serial.print(".");
@@ -74,8 +79,8 @@ void loop() {
   
   double values[] = { degreesF, degreesC, humidity };
   
-  int response = m2xClient.postDeviceUpdates(deviceId, 2, streamNames,
-                                             counts, ats, values);
+//  int response = m2xClient.postDeviceUpdates(deviceId, 2, streamNames,counts, ats, values);
+  int response = m2xClient.postDeviceUpdates(deviceId, 2, streamNames,counts, ats, values);                                           
   Serial.print("M2X client response code: ");
   Serial.println(response);
 

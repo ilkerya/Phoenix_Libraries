@@ -22,16 +22,6 @@ int TimeOutUart=0;
 // TouchSensor       TouchKey1;
 
 
-  char streamName1[] = "VOC"; // Stream you want to push to
-  char streamName2[] = "Pressure"; // Stream you want to push to
-  char streamName3[] = "PM25"; // Stream you want to push to
-  char streamName4[] = "Temperature"; // Stream you want to push to
-  char streamName5[] = "Humidity"; // Stream you want to push to
-  char streamName6[] = "Light"; // Stream you want to push to
-  char streamName7[] = "Noise"; // Stream you want to push to
-  char streamName8[] = "ID"; // Stream you want to push to
-
-
 float PrevNoiseRead = 0;
 float Accx,Accy,Accz,AccPitch, AccRoll, AccmaxTilt; // BMA222 Accelomater Values
 bool DataSuccess = 0;
@@ -131,6 +121,8 @@ struct{
 	unsigned int Light;
 	float Pressure;
     int CO2;
+    float Ammonia;
+    float CO;
 }RawValue;
 
 struct{
@@ -166,6 +158,16 @@ struct{
 }Filtered;
 
 
+String Jsondata;
+String String_Temperature ="";
+String String_Humidity    ="";
+String String_Pressure    = "";
+String String_Light = "";
+String String_PM25 = "";
+String String_TVOC = "";
+String String_CO2e = "";
+String String_Noise  = "";
+
 
 struct{
 	bool Calibrated;
@@ -199,6 +201,7 @@ int CO2_AbsoluteArr[SENSOR_MAXTASK+1];
 unsigned int LightArr[SENSOR_MAXTASK+1];
 float PressureArr[SENSOR_MAXTASK+1];
 
+bool SensorDataReady2Send = false;
 
 String IAQstr="No Measurement";
 

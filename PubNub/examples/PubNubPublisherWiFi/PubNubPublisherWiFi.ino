@@ -27,9 +27,9 @@ char subkey[] = "demo";
 char channel[] = "hello_world";
 
 // your network name also called SSID
-char ssid[] = "energia";
+char ssid[] = "Yagci24GHz";
 // your network password
-char password[] = "launchpad";
+char password[] = "berkmert";
 
 /* Modify this with the analog channels you would like to read */
 /* CC3200, MSP430F5529 TivaC123, TivaC1294 LaunchPads */

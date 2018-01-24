@@ -430,6 +430,10 @@ void G_SensorPrint(void){
 }
 
 void GSensorActions(){
+	#ifdef NO_SENSOR
+			return;
+  	#endif
+
 	int i;
 	G_SensorRead();
 	Tilt.Current = (int)(AccmaxTilt);
@@ -515,9 +519,11 @@ void Barometer_Measure(void){
 }
 
 void SensorActions_OddTask(){
+	#ifdef NO_SENSOR
+		return;
+  	#endif
 
-	Barometer_Measure();
-
+  	Barometer_Measure();
 
 }
 void GSensorReset(){
@@ -642,6 +648,12 @@ void SensorsSetLimits(void){
 void SensorActions(){
 		unsigned char i;
 		unsigned char test;
+	#ifdef NO_SENSOR
+		return;
+  	#endif
+
+
+
 
 		#ifdef TSL2591_LIGHT_NEW
 			tsl.begin(); // TSL2591
@@ -725,8 +737,17 @@ void SensorActions(){
   			delay(10);
 
   			#endif
+//////////  <MutichannelGasSensor.h>
+    delay(10);
+    gas.begin(0x04);//the default I2C address of the slave is 0x04
+ //   gas.powerOn();
+	 delay(10);
+    RawValue.Ammonia = gas.measure_NH3();
 
+  //  RawValue.CO = gas.measure_CO();
 
+  //      Serial.print("Firmware Version = ");
+ //       Serial.println(gas.getVersion());
 
  //  		Serial.print("    Surf. Temp: ");Serial.print(SurfaceTemp);
 
@@ -769,6 +790,11 @@ void SensorActions(){
 		Serial.print(Noise);
 		Serial.print(" Pressure:");
 		Serial.print(RawValue.Pressure);
+    	Serial.print(" Ammonia(NH3):"); //  Main Sensor1 1-500 ppm
+		Serial.print(RawValue.Ammonia);
+    	Serial.print(" CO:"); //  // Main Sensor2 //RED 1-1000 ppm
+		Serial.print(RawValue.CO);
+
 #endif
 
  // 	String username = "mobile0";
@@ -780,20 +806,20 @@ void SensorActions(){
   //	String data ="\"data\":{";
   	String data ="{";
 		data += "\"a\":";data += String(IAQ.TVOC);	 data += Separator;
-  		data += "\"b\":";data += Float2String4Json(RawValue.Temperature);data +=Separator;
-  		data += "\"c\":";data += Float2String4Json(RawValue.Humidity);data +=Separator;
+  		data += "\"b\":";data += Float2Str_OneDigExp(RawValue.Temperature);data +=Separator;
+  		data += "\"c\":";data += Float2Str_OneDigExp(RawValue.Humidity);data +=Separator;
 #ifndef SENSEAIR_CO2_INSTALLED
 		data += "\"d\":";data += String(IAQ.eCO2);data +=Separator;
 #endif
 #ifdef SENSEAIR_CO2_INSTALLED
 		data += "\"d\":";data += String(Filtered.CO2_Absolute);data +=Separator;
 #endif
-  		data += "\"e\":";data += Float2String4Json(RawValue.PM25);data +=Separator;
+  		data += "\"e\":";data += Float2Str_OneDigExp(RawValue.PM25);data +=Separator;
   		JsonCounter++;
   		data += "\"f\":";data += String(JsonCounter);data +=Separator;
   		data += "\"g\":";data += String(RawValue.Light);data +=Separator;
-  		data += "\"h\":";data += Float2String4Json(Noise);data +=Separator;
-  		data += "\"i\":";data += Float2String4Json(RawValue.Pressure/100);data +=Separator;
+  		data += "\"h\":";data += Float2Str_OneDigExp(Noise);data +=Separator;
+  		data += "\"i\":";data += Float2Str_OneDigExp(RawValue.Pressure/100);data +=Separator;
 	//	data += "\"j\":";data += String(IAQ.CO2e);data +=Separator;
   		data += "\"device\":";
 		data +="\""+String(Device[DEVICEID])+"\"";// device;
@@ -857,8 +883,17 @@ void SensorActions(){
 			Filtered.CO2e = IntGetAverage(&CO2eArr[0],SensorIndex);
 			Filtered.CO2_Absolute = IntGetAverage(&CO2_AbsoluteArr[0],SensorIndex);
 			Filtered.Light = UintGetAverage(LightArr,SensorIndex);
-	//		Filtered.Pressure = (int)(LongGetAverage(PressureArr,SensorIndex)/100);
 			Filtered.Pressure = FloatGetAverage(PressureArr,SensorIndex);
+
+			String_Temperature = Float2Str_OneDigExp(Filtered.Temperature);
+			String_Humidity    = String((unsigned char)Filtered.Humidity);
+			String_Pressure    = String((unsigned int)(Filtered.Pressure/100));
+			String_Light       = String(Filtered.Light);
+			String_PM25		   = Float2Str_OneDigExp(Filtered.PM25);
+			String_TVOC		   = String(Filtered.TVOC);
+			String_CO2e		   = String(Filtered.CO2e);
+			String_Noise       = Float2Str_OneDigExp(Filtered.Noise);
+			SensorDataReady2Send = true; // release to send data 2 Cloud
 
 					#ifdef PRINT_SENSOR_TABLE
 			PrintIAQFinalLelevels();
@@ -1138,14 +1173,14 @@ unsigned char SM_WarningsCall(void){
 
 
 		if(SM_Warnings.Temperature == HIGH_EXT) {SM_Warnings.Dominant = DOM_TEMPERATURE; SM_Advice = " Hey this is not a Sauna! "; return HIGH_EXT;}
-		if(SM_Warnings.Humidity    == HIGH_EXT) {SM_Warnings.Dominant = DOM_HUMIDITY;  return HIGH_EXT;}
+		if(SM_Warnings.Humidity    == HIGH_EXT) {SM_Warnings.Dominant = DOM_HUMIDITY;  SM_Advice = " Extreme Humid Any Window! ";return HIGH_EXT;}
 
 		if(SM_Warnings.Temperature == LOW_EXT) {SM_Warnings.Dominant = DOM_TEMPERATURE; SM_Advice = " Freezing to death U sure? "; return LOW_EXT;}
 		if(SM_Warnings.Humidity    == LOW_EXT) {SM_Warnings.Dominant = DOM_HUMIDITY;  SM_Advice = " Dont you swell ? ";return LOW_EXT;}
 
 
 		if(SM_Warnings.Temperature == HIGH_VERY) {SM_Warnings.Dominant = DOM_TEMPERATURE;SM_Advice = " You enjoy sweating! "; return HIGH_VERY;}
-		if(SM_Warnings.Humidity    == HIGH_VERY) {SM_Warnings.Dominant = DOM_HUMIDITY; return HIGH_VERY;}
+		if(SM_Warnings.Humidity    == HIGH_VERY) {SM_Warnings.Dominant = DOM_HUMIDITY;   SM_Advice = " "; return HIGH_VERY;}
 
 		if(SM_Warnings.Temperature == LOW_VERY) {SM_Warnings.Dominant = DOM_TEMPERATURE;  SM_Advice = " Cool Hope u are exercising! ";return LOW_VERY;}
 		if(SM_Warnings.Humidity    == LOW_VERY) {SM_Warnings.Dominant = DOM_HUMIDITY;  SM_Advice = " Getting dry You have a window? ";return LOW_VERY;}
@@ -1161,12 +1196,14 @@ unsigned char SM_WarningsCall(void){
 		if(SM_Warnings.Dust == HIGH_ABIT)        {SM_Warnings.Dominant = DOM_DUST;  SM_Advice = " Did U Clean The Room? ";return HIGH_ABIT;}
 
 		if(SM_Warnings.Temperature == HIGH_ABIT) {SM_Warnings.Dominant = DOM_TEMPERATURE; SM_Advice = " It's time turn on the AC! ";return HIGH_ABIT;}
-		if(SM_Warnings.Humidity    == HIGH_ABIT) {SM_Warnings.Dominant = DOM_HUMIDITY; return HIGH_ABIT;}
+		if(SM_Warnings.Humidity    == HIGH_ABIT) {SM_Warnings.Dominant = DOM_HUMIDITY; SM_Advice = " It's a bit Humid!"; return HIGH_ABIT;}
 
 		if(SM_Warnings.Temperature == LOW_ABIT) {SM_Warnings.Dominant = DOM_TEMPERATURE;  SM_Advice = " You are northerner! ";return LOW_ABIT;}
 		if(SM_Warnings.Humidity    == LOW_ABIT) {SM_Warnings.Dominant = DOM_HUMIDITY;  SM_Advice = " Abit dry Like It? "; return LOW_ABIT;}
 
 		SM_Warnings.Dominant = DOM_NONE;
+		SM_Advice = " ";
+		return ITS_OK;
 }
 
 

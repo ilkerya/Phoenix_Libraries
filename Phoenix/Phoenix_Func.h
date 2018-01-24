@@ -4,20 +4,23 @@
 //#include <SoftwareSerial.h>				//chenll,del
 
 
-String Float2String(float Val){
-	  int temp= (int)(Val * 10);
-    int Decimal =abs(temp);
-    Decimal %= 10;
-    return(String((int)Val) + '.' + String(Decimal));
+String Float2Str_OneDigExp(float Val){
+	  	int temp= (int)(Val * 10);
+    	int Decimal =abs(temp);
+    	Decimal %= 10;
+    	return(String((int)Val) + '.' + String(Decimal));
   }
-/*
-    String Float2StringNoDecimal(float Val){
-  	  int temp= (int)Val;
-      int Decimal =abs(temp);
-      Decimal %= 10;
-      return(String((int)Val) + '.' + String(Decimal));
+
+
+
+String Float2String_NoExp(float Val){
+  //	int temp= (int)Val;
+  //    int Decimal =abs(temp);
+        return(String((int)Val)) ;
   }
-*/
+
+
+
 void PrintCharArray(char *p, int n){
   for (int i=0; i< n ; i++){
   		Serial.print(p[i]);// to console
@@ -167,13 +170,6 @@ void SortChar(unsigned char *p, unsigned char Length){
 long JsonCounter;
 // Name:device1 Temp:23.5 Humid:45.3
 //#define PRINT_SENSOR_TABLE
-
-  String Float2String4Json(float Val){
-	  int temp= (int)(Val * 10);
-    int Decimal =abs(temp);
-    Decimal %= 10;
-    return(String((int)Val) + '.' + String(Decimal));
-  }
 
 
 

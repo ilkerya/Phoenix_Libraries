@@ -1,0 +1,30 @@
+
+
+
+Sensor Speeds
+
+BMA222  Tilt & Acceleration
+0x18   1MHz
+
+T5403  Pressure
+0x77   1MHz
+
+SI7013 Temp&Humidity
+0x40   1MHz
+
+TSL2591 Light
+0X29 1MHz
+
+IAQ-Core // 9 bytes read
+0x5A  1KHz  // 4Khz Fail
+
+TMP006
+0X41 1MHz  ADR LINES
+
+
+
+MUTICHANNELGASSENSOR_H__
+0x04 ADR  10KHz 
+
+
+
