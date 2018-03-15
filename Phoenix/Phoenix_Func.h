@@ -54,7 +54,7 @@ float FloatGetAverage(float *p,unsigned char Length){
 unsigned int UintGetAverage(unsigned int *p,unsigned char Length){
 	unsigned int i;
 	long r=0;
-	for (i=3; i<=(Length-3);i++){// 3-26 //total 24
+	for (i=3; i<=((unsigned int)Length-3);i++){// 3-26 //total 24
 		r += p[i];
 	}
 	return (unsigned int)(r/(Length-5));

@@ -24,15 +24,22 @@
 
 const int subLedPin = RED_LED;
 
-char pubkey[] = "demo";
-char subkey[] = "demo";
-char channel[] = "hello_world";
+char pubkey[] = "pub-c-863cd300-2577-42dd-a2d0-1f6082581cdd";
+char subkey[] = "sub-c-96140c92-ef01-11e7-9147-0a76abdd6fc5";
+char channel[] = "OpenAir";
 char uuid[] = "xxxxxxxx-xxxx-4444-9999-xxxxxxxxxxxx";
 
+
+/*
 // your network name also called SSID
 char ssid[] = "Yagci24GHz";
 // your network password
 char password[] = "berkmert";
+*/
+
+char ssid[] = "OpenAir_24G";
+// your network password
+char password[] = "CloseAir";
 
 void random_uuid() {
 	randomSeed(analogRead(0) + millis() * 1024);

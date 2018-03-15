@@ -67,9 +67,10 @@ void ATT_CLOUD(void){
 						};
 
 //	double values[] = { 1,2,3,4,5,6,7,8};
+int counts[] = {1,1,1,1,1,1,1,1};
+   int response = m2xClient.postDeviceUpdate(Device[AT2T_CLOUD_ID], 8, streamNames, values, NULL);
 
-    int response = m2xClient.postDeviceUpdate(Device[AT2T_CLOUD_ID], 8, streamNames, values, NULL);
-
+  //  int response = m2xClient.postDeviceUpdates(Device[AT2T_CLOUD_ID], 8, streamNames,counts ,NULL, values);
       Serial.print("Al:");Serial.print(response);
       Serial.println();
 
@@ -182,18 +183,18 @@ char* Str2CharArray(String Message){
 	int  StrLength = Message.length();
 //	int  StrLength = Message.length();
 
-	char Buffer[StrLength+1];
+	char Buffer[StrLength+1]; //13.03.2018
 	for(i = 0; i < StrLength; i++){
 		Buffer[i] = Message.charAt(i);
 	//	Serial.print(" ");Serial.print(i);Serial.print(":");
 	//	Serial.print(Buffer[i]);
 	}
-	Buffer[StrLength] = NULL;
+	Buffer[StrLength] = '0';   // replaced NULL
 
 	Serial.println();
 	Serial.print("Sizeoff:");
 	Serial.println(sizeof(Buffer));
-	for( i = 0; Buffer[i] != NULL; i++){
+	for( i = 0; Buffer[i] != '0'; i++){   // replaced NULL
 		Serial.print(" ");Serial.print(i);Serial.print(":");
 		Serial.print(Buffer[i]);
 	}
@@ -239,10 +240,10 @@ void TweetApp(void){
 	//	Serial.print(" ");Serial.print(i);Serial.print(":");
 	//	Serial.print(Tweetmsg[i]);
 	}
-	Tweetmsg[StrLength] = NULL;
+	Tweetmsg[StrLength] = '0'; // replaced NULL
 
 	Serial.println();
-	for(i = 0; Tweetmsg[i] != NULL; i++){
+	for(i = 0; Tweetmsg[i] != '0'; i++){ // replaced NULL
 		Serial.print(" ");Serial.print(i);Serial.print(":");
 		Serial.print(Tweetmsg[i]);
 	}
@@ -309,7 +310,7 @@ void Cloud_Kepware(){
 
 
 	if(SensorDataReady2Send == false)return; // send data when it is ready
-  	for(i = 0; i < sizeof(Kepware) ; i++){
+  	for(i = 0; i < (int)sizeof(Kepware) ; i++){
 	  	Cloud[i] = Kepware[i];
   	}
 

@@ -60,11 +60,12 @@ void Phoenix_StartUp(void){
 
 
 #ifndef NO_SENSOR_INIT
+
      barometer.begin();
         // Grab a baseline pressure for delta altitude calculation.
     pressure_baseline = barometer.getPressure(MODE_ULTRA);
 
-
+/*
     delay(10);
     gas.begin(0x04);//the default I2C address of the slave is 0x04
   //   gas.begin();//the default I2C address of the slave is 0x04
@@ -73,6 +74,7 @@ void Phoenix_StartUp(void){
     delay(10);
 //    Serial.print("MultiChannel Gas Sensor Firmware Version = ");
     Serial.println(gas.getVersion());
+  */
 #endif
    //----
     pinMode(FAN_PORT,OUTPUT);
@@ -87,7 +89,7 @@ void Phoenix_StartUp(void){
 
     RawValue.CO2 = 450; // default
     Filtered.Pressure = 101300;
-    Filtered.PrevPressure - Filtered.Pressure;
+    Filtered.PrevPressure = Filtered.Pressure;
 
     PrintDeviceInfo();Serial.println();Serial.println();
     #ifdef LAB_TEST_DEVICE
@@ -96,6 +98,7 @@ void Phoenix_StartUp(void){
      #endif
 
   //  Serial2.begin(9600);
+
      Serial1.begin(9600);
 
        pinMode(TRY1_PORT,OUTPUT);
@@ -346,4 +349,72 @@ void Phoenix_Loop(void){
         IRSend1.StartCommand(AC_ELUX,TURN_OFF);   //send a turn on command of Electrolux split AC
         delay(1000);*/
 
+}
+
+
+//------------------- when IR pwm on, timer3B = 64ms, when IR pwm off, Timer3B =6.4ms
+void ISR_Timer3B(void) {
+  //   Phoenix_IntTimer();
+  //  while(1)  {   }// endless loop for debugging
+
+  if (++TimeCnt >= 12) {               //8.160ms *12 = 100ms
+    TimeCnt = 0;
+
+
+
+    Task100mSec = true;
+    Timer500mSec++;
+    Timer1Sec++;
+    Timer5Sec++;
+    Timer10Sec++;
+    TaskTimer++;
+
+    if (Timer500mSec > 2) {
+      Timer500mSec = 0;
+      Task500mSec = true;
+      Leds_Run();
+    }
+
+    if (Timer1Sec > TIMER_MAX) {
+      Timer1Sec = 0;
+      Task1Sec = true;
+
+      /*
+
+        if((WiFi.status() != WL_CONNECTED)){// || (WiFi.localIP() == INADDR_NONE)){
+        DataSuccessTimer=0;
+        }
+        else {
+         DataSuccessTimer++;
+         if(DataSuccessTimer > 2){
+           DataSuccessTimer = 0;
+           if(DataSuccess)RGBLed1.DispColor(GREEN);
+           else RGBLed1.DispColor(RED);
+         }
+         else  RGBLed1.DispColor(NOCOLOR);
+        }
+
+
+        DataSuccessTimer++;
+        if(DataSuccessTimer > 2){
+        DataSuccessTimer = 0;
+        RGBLed1.DispColor(GREEN);
+        }
+        else RGBLed1.DispColor(NOCOLOR);
+      */
+    }
+    if (Timer5Sec > 50) {
+      Timer5Sec = 0;
+      Task5Sec = true;
+      //    Task1Sec = true;
+    }
+    if (Timer10Sec > 100) {
+      Timer10Sec = 0;
+      Task10Sec = true;
+    }
+  }
+
+  // Clear the timer interrupt.
+  MAP_TimerIntClear(TIMERA3_BASE, TIMER_TIMB_MATCH);
+  MAP_TimerLoadSet(TIMERA3_BASE, TIMER_B, TIME3B_COUNTER);
 }

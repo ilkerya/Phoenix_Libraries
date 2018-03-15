@@ -28,7 +28,9 @@ git commit -m "Add existing file"
 git push https://github.com/ilkerya/Phoenix master
 
 // For Electrolux git
-git push  http://git.int.electrolux.com/ilkerya/Phoenix_OpenAir master
+git push  http://git.int.electrolux.com/ilkerya/Phoenix_OpenAir.git master
 
 
 https://help.github.com/articles/fetching-a-remote/
+
+

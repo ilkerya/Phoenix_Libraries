@@ -29,7 +29,7 @@
 #define READ_ID1  0x0F
 #define READ_ID2  0xFC
 #define READ_ID3  0xC9
-#define READ_FIRMWARE  0x84
+//#define READ_FIRMWARE  0x84
 #define READ_FIRMWARE  0xB8
 
 class SI7013 {

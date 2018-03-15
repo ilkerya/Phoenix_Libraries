@@ -29,6 +29,8 @@
   Modified 28 September 2010 by Mark Sproul
  */
 
+ dfdf
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -78,7 +80,7 @@ static const unsigned long g_ulUARTInt[2] =
 //*****************************************************************************
 static const unsigned long g_ulUARTPinmode[2] =
 {
-	PIN_MODE_3, PIN_MODE_5									//cll,uart1 mode change fom PIN_MODE_7 TO PIN_MODE_5 
+	PIN_MODE_3, PIN_MODE_5									//cll,uart1 mode change fom PIN_MODE_7 TO PIN_MODE_5
 };
 
 //*****************************************************************************
@@ -121,7 +123,7 @@ HardwareSerial::HardwareSerial(void)
 	rxBufferSize = SERIAL_BUFFER_SIZE;
 }
 
-HardwareSerial::HardwareSerial(unsigned long module) 
+HardwareSerial::HardwareSerial(unsigned long module)
 {
 	txWriteIndex = 0;
 	txReadIndex = 0;
@@ -179,7 +181,7 @@ HardwareSerial::primeTransmit(unsigned long ulBase)
 void HardwareSerial::begin(unsigned long baud)
 {
 	baudRate = baud;
-	
+
 	/* Set the UART to interrupt whenever the TX FIFO is almost empty or
 	 * when any character is received. */
 	//MAP_UARTFIFOLevelSet(UART_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
@@ -193,7 +195,7 @@ void HardwareSerial::begin(unsigned long baud)
 	MAP_PinTypeUART(g_ulUARTConfig[uartModule][0], g_ulUARTPinmode[uartModule]);
 	MAP_PinTypeUART(g_ulUARTConfig[uartModule][1], g_ulUARTPinmode[uartModule]);
 
-	
+
 	MAP_UARTConfigSetExpClk(UART_BASE, 80000000, baudRate,
 				(UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE |
 				UART_CONFIG_WLEN_8));
@@ -203,7 +205,7 @@ void HardwareSerial::begin(unsigned long baud)
 
 	/* Enable the UART operation. */
 	MAP_UARTEnable(UART_BASE);
-    
+
 	MAP_UARTIntEnable(UART_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
@@ -222,7 +224,7 @@ void HardwareSerial::end()
 
 	flushAll();
 
-	/* If interrupts were enabled when we turned them off, 
+	/* If interrupts were enabled when we turned them off,
 	 * turn them back on again. */
 	if(!ulInt) {
 		MAP_IntMasterEnable();

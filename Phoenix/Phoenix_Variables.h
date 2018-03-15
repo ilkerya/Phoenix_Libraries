@@ -38,8 +38,8 @@ struct{
 }LedStatus;
 
 
-unsigned char start[1];
-unsigned  char data[10];
+ char start[1];
+char data[10];
 unsigned char TimeCnt;
 unsigned char KeyBuff;
 unsigned char LastKeyBuff;

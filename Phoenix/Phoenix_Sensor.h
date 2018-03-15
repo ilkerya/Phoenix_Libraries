@@ -272,10 +272,10 @@ void readCO2SenseAir(void) {
 //--------------------------------
 void readPMconc(void) {
 
-    int j=0;
+ //   int j=0;
     int i=0;
-    int checksum = 0;
-//    Serial1.begin(9600); //dont do doesnt work!!
+    int checksum = 32768;
+  //  Serial1.begin(9600); //dont do doesnt work!!
     delay(10);
 
     for (i=0; i<10; i++){
@@ -298,7 +298,7 @@ void readPMconc(void) {
 		}
     }
         		#ifndef LAB_TEST_DEVICE
-				Serial.print("b");
+				Serial.print("b");//Serial.print(i);
 				#endif
 
     if (Serial1.available()){
@@ -313,18 +313,22 @@ void readPMconc(void) {
 				break;
 			}
         }
-        Serial1.readBytes(data,9);
+
+       		Serial1.readBytes(data,9); //2018.02.14
+
+
         checksum=(int)data[1]+(int)data[2]+(int)data[3]+(int)data[4]+(int)data[5]+(int)data[6];
-    }
+        }
+			// Serial.print("data:");Serial.print(data);
         		#ifndef LAB_TEST_DEVICE
-				Serial.print("c");
+				Serial.print("c");//Serial.print(i);
 				#endif
 
     if ((unsigned char)checksum==data[7]){             //chenll,has to change the type before comparing.
         RawValue.PM25=(((float)data[2])*256+(float)data[1])/10;
     //    PM10=(((float)data[4])*256+(float)data[3])/10;
         		#ifndef LAB_TEST_DEVICE
-     			Serial.print(" PM Ok   ");
+     			Serial.print(" PM Ok ");//Serial.print(RawValue.PM25);
      			#endif
 
         PMSuccess++;
@@ -622,32 +626,31 @@ void BarometerApp(void){
 
 
 void SensorsSetLimits(void){
- 	if(RawValue.Temperature > MAX_Temperature)RawValue.Temperature = MAX_Temperature;
- 	if(RawValue.Temperature < MIN_Temperature)RawValue.Temperature = MIN_Temperature;
- 	if(RawValue.Humidity > MAX_Humidity)RawValue.Humidity = MAX_Humidity;
- 	if(RawValue.Humidity < MIN_Humidity)RawValue.Humidity = MIN_Humidity;
+ 	if(RawValue.Temperature >= MAX_Temperature)RawValue.Temperature = MAX_Temperature;
+ 	if(RawValue.Temperature <= MIN_Temperature)RawValue.Temperature = MIN_Temperature;
+ 	if(RawValue.Humidity >= MAX_Humidity)RawValue.Humidity = MAX_Humidity;
+ 	if(RawValue.Humidity <= MIN_Humidity)RawValue.Humidity = MIN_Humidity;
 
- 	if(IAQ.TVOC > MAX_TVOC)IAQ.TVOC = MAX_TVOC;
- 	if(IAQ.eCO2 > MAX_CO2)IAQ.eCO2 = MAX_CO2;
- 	if(RawValue.CO2 > MAX_CO2)RawValue.CO2 = MAX_CO2;
+ 	if(IAQ.TVOC >= MAX_TVOC)IAQ.TVOC = MAX_TVOC;
+ 	if(IAQ.eCO2 >= MAX_CO2)IAQ.eCO2 = MAX_CO2;
+ 	if(RawValue.CO2 >= MAX_CO2)RawValue.CO2 = MAX_CO2;
 
 
- 	if(IAQ.TVOC < MIN_TVOC)IAQ.TVOC = MIN_TVOC;
- 	if(IAQ.eCO2 < MIN_CO2)IAQ.eCO2 = MIN_CO2;
- 	if(RawValue.CO2 <  MIN_CO2)RawValue.CO2 = MIN_CO2;
+ 	if(IAQ.TVOC <= MIN_TVOC)IAQ.TVOC = MIN_TVOC;
+ 	if(IAQ.eCO2 <= MIN_CO2)IAQ.eCO2 = MIN_CO2;
+ 	if(RawValue.CO2 <=  MIN_CO2)RawValue.CO2 = MIN_CO2;
 
- 	if(RawValue.PM25 > MAX_PM25)RawValue.PM25 = MAX_PM25;
- 	if(RawValue.PM25 < MIN_PM25)RawValue.PM25 = MIN_PM25;
+ 	if(RawValue.PM25 >= MAX_PM25)RawValue.PM25 = MAX_PM25;
+ 	if(RawValue.PM25 <= MIN_PM25)RawValue.PM25 = MIN_PM25;
 
- 	if(RawValue.Light > MAX_LIGHT)RawValue.Light = MAX_LIGHT;
- 	if(RawValue.Light < MIN_LIGHT)RawValue.Light = MIN_LIGHT;
+ 	if(RawValue.Light >= MAX_LIGHT)RawValue.Light = MAX_LIGHT;
+ 	if(RawValue.Light <= MIN_LIGHT)RawValue.Light = MIN_LIGHT;
 
 // 1013 mbar se level max
 
 }
 void SensorActions(){
-		unsigned char i;
-		unsigned char test;
+
 	#ifdef NO_SENSOR
 		return;
   	#endif
@@ -738,12 +741,13 @@ void SensorActions(){
 
   			#endif
 //////////  <MutichannelGasSensor.h>
+/*
     delay(10);
     gas.begin(0x04);//the default I2C address of the slave is 0x04
  //   gas.powerOn();
 	 delay(10);
     RawValue.Ammonia = gas.measure_NH3();
-
+*/
   //  RawValue.CO = gas.measure_CO();
 
   //      Serial.print("Firmware Version = ");
@@ -938,7 +942,8 @@ unsigned char Temp_Check(void){
 	else if(Filtered.Temperature > TEMPH_MODERATE){SM_Warnings.Temperature = HIGH_ABIT;return MODERATE;}
 	else if(Filtered.Temperature < TEMPL_MODERATE){SM_Warnings.Temperature = LOW_ABIT;return MODERATE;}
 
-	else SM_Warnings.Temperature = ITS_OK; return HEALTHY;
+	else SM_Warnings.Temperature = ITS_OK;
+	return HEALTHY;
 }
 unsigned char PM25_Check(void){
 
@@ -953,7 +958,7 @@ unsigned char PM25_Check(void){
 
 	else if(Filtered.PM25 > PM25_MODERATE)return MODERATE;
 	else if(Filtered.PM25 > (PM25_MODERATE-PM25_HYST_MODERATE)){if(IAQ_Health[QUE_PM25]==MODERATE)return MODERATE;}
-	else return HEALTHY;
+	return HEALTHY;
 }
 
 
@@ -973,7 +978,7 @@ unsigned char TVOC_Check(void){
 
 	else if(Filtered.TVOC > TVOC_MODERATE)return MODERATE;
 	else if(Filtered.TVOC > (TVOC_MODERATE-TVOC_HYSTERESIZ)){if(IAQ_Health[QUE_VOC]==MODERATE)return MODERATE;}
-	else return HEALTHY;
+	 return HEALTHY;
 }
 unsigned char CO2_Check(int Value){
 	if(LedStatus.AMS_Ok == false)return HEALTHY;
@@ -988,7 +993,7 @@ unsigned char CO2_Check(int Value){
 
 	else if(Value > CO2e_MODERATE)return MODERATE;
 	else if(Value > (CO2e_MODERATE-CO2e_HYSTERESIZ)){if(IAQ_Health[QUE_CO2]==MODERATE)return MODERATE;}
-	else return HEALTHY;
+	 return HEALTHY;
 }
 /*
 char eCO2_TrendCheck(void){
